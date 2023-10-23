@@ -26,7 +26,7 @@ def standart_left_platform():
     global speed_of_left_platform
     global score_of_player_1
     
-    left_platform_heigth = 180
+    left_platform_heigth = 150
     if score_of_player_1 > 6:
         left_platform_heigth /= 1.5
     
@@ -43,7 +43,7 @@ def standart_right_platform():
     global speed_of_right_platform
     global score_of_player_2
     
-    right_platform_heigth = 180
+    right_platform_heigth = 150
     if score_of_player_2 > 6:
         right_platform_heigth /= 1.5
     
@@ -77,31 +77,31 @@ verdana_pro_semibold_40 = pygame.font.Font(verdana_pro_semibold_path, 40)
 
 #screen
 def images_on_screen():
-    window.fill(color_of_background)
     
     score_1 = britannic_bold_font_100.render(str(score_of_player_1 // 10) + str(score_of_player_1 % 10), True, color_of_score_font)
     score_2 = britannic_bold_font_100.render(str(score_of_player_2 // 10) + str(score_of_player_2 % 10), True, color_of_score_font)
     
+    window.blit(background, [0, 0])
     window.blit(score_1, [window_width // 2 - 320, top_menu_height + 20])
     window.blit(score_2, [window_width // 2 + 250, top_menu_height + 20])
-    window.blit(top_menu_surface, [0, 0])
     
+    pygame.draw.circle(window, color_of_ball, ball_position.center, ball_radius)
     pygame.draw.rect(window, color_for_platforms, left_platform_position)
     pygame.draw.rect(window, color_for_platforms, right_platform_position)
 
 
-top_menu_surface = pygame.image.load('C:/Users/justt/OneDrive/Рабочий стол/top_menu.jpg')
-top_menu_height = 150
+background = pygame.image.load('C:/Users/justt/OneDrive/Рабочий стол/Peng Pong/background.png')
+top_menu_height = 80
 
 #platforms
 speed_of_left_platform = 6.5
 speed_of_right_platform = 6.5
 
 left_platform_width = 20
-left_platform_heigth = 180
+left_platform_heigth = 150
 
 right_platform_width = 20
-right_platform_heigth = 180
+right_platform_heigth = 150
 
 left_platform_position = pygame.rect.Rect(left_platform_width * 5,
                                           window_heigth // 2 - left_platform_heigth // 2 + 70,
@@ -115,12 +115,12 @@ right_platform_position = pygame.rect.Rect(window_width - right_platform_width *
 
 
 #ball
-ball_radius = 15
+ball_radius = 12
 ball_speed = 5
 ball_x_speed = ball_speed
 ball_y_speed = 0
-ball_position = pygame.rect.Rect(window_width // 2,
-                                 window_heigth // 2,
+ball_position = pygame.rect.Rect(window_width // 2 - 12,
+                                 window_heigth // 2 + 22,
                                  ball_radius * 2,
                                  ball_radius * 2)
 
@@ -234,11 +234,6 @@ while game_is_running:
             lose = True
             ball_speed = 5
             timer_before_match = None
-        
-        
-        pygame.draw.circle(window, color_of_ball, ball_position.center, ball_radius)
-        pygame.draw.rect(window, color_for_platforms, left_platform_position)
-        pygame.draw.rect(window, color_for_platforms, right_platform_position) 
                
     
     #pause after match
@@ -275,7 +270,7 @@ while game_is_running:
             count_click_of_ready_p1 = 0
             count_click_of_ready_p2 = 0
             
-            ball_position.center = [window_width // 2, window_heigth // 2]
+            ball_position.center = [window_width / 2, window_heigth / 2 + 35]
             left_platform_position.centery = window_heigth // 2 + 70
             right_platform_position.centery = window_heigth // 2 + 70
             
