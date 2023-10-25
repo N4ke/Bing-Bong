@@ -56,9 +56,8 @@ def standart_right_platform():
 
 #colors
 color_of_background = (205, 127, 50)
-color_for_platforms = (69, 22, 28)
+color_of_platforms = (69, 22, 28)
 color_of_ball = (150, 0, 24)
-color_of_top_menu = (121, 85, 61)
 color_of_score_font = (255, 215, 0)
 white_color = (255, 255, 255)
 black_color = (0, 0, 0)
@@ -68,15 +67,15 @@ red_color = (255, 43, 43)
 
 #fonts
 britannic_bold_font_path = pygame.font.match_font('britannic bold')
-arial_font_path = pygame.font.match_font('arial')
+harlow_solid_italic_font_path = pygame.font.match_font('harlow solid italic')
 britannic_bold_font_100 = pygame.font.Font(britannic_bold_font_path, 100)
-arial_font_200 = pygame.font.Font(arial_font_path, 200)
+harlow_solid_italic_font_100 = pygame.font.Font(harlow_solid_italic_font_path, 100)
 verdana_pro_semibold_path = pygame.font.match_font('verdana pro semibold')
 verdana_pro_semibold_40 = pygame.font.Font(verdana_pro_semibold_path, 40)
 
 
 #screen
-def images_on_screen():
+def draw_screen():
     
     score_1 = britannic_bold_font_100.render(str(score_of_player_1 // 10) + str(score_of_player_1 % 10), True, color_of_score_font)
     score_2 = britannic_bold_font_100.render(str(score_of_player_2 // 10) + str(score_of_player_2 % 10), True, color_of_score_font)
@@ -86,8 +85,8 @@ def images_on_screen():
     window.blit(score_2, [window_width // 2 + 250, top_menu_height + 20])
     
     pygame.draw.circle(window, color_of_ball, ball_position.center, ball_radius)
-    pygame.draw.rect(window, color_for_platforms, left_platform_position)
-    pygame.draw.rect(window, color_for_platforms, right_platform_position)
+    pygame.draw.rect(window, color_of_platforms, left_platform_position)
+    pygame.draw.rect(window, color_of_platforms, right_platform_position)
 
 
 background = pygame.image.load('C:/Users/justt/OneDrive/Рабочий стол/Peng Pong/background.png')
@@ -103,6 +102,9 @@ left_platform_heigth = 150
 right_platform_width = 20
 right_platform_heigth = 150
 
+direction_of_left_platform = 0
+direction_of_right_platform = 0
+
 left_platform_position = pygame.rect.Rect(left_platform_width * 5,
                                           window_heigth // 2 - left_platform_heigth // 2 + 70,
                                           left_platform_width,
@@ -116,7 +118,7 @@ right_platform_position = pygame.rect.Rect(window_width - right_platform_width *
 
 #ball
 ball_radius = 12
-ball_speed = 5
+ball_speed = 8
 ball_x_speed = ball_speed
 ball_y_speed = 0
 ball_position = pygame.rect.Rect(window_width // 2 - 12,
@@ -150,7 +152,7 @@ while game_is_running:
             game_is_running = False
             break
     
-    images_on_screen()
+    draw_screen()
 
     #match
     if not lose:
@@ -185,41 +187,72 @@ while game_is_running:
             elif last_winner == 'player2':
                 ball_x_speed = -ball_speed
             
+            #directions of ball at beginning
             if random.randint(0, 1) == 0:
                 ball_y_speed = ball_speed
+                ball_y_speed *= random.choice([1/4, 1/3, 1/2, 1, 1.5])
             else:
                 ball_y_speed = -ball_speed
+                ball_y_speed *= random.choice([1/4, 1/3, 1/2, 1, 1.5])
             
             beginning_of_match = False
             
         
         #collision with platforms
         if left_platform_position.colliderect(ball_position):
-            ball_x_speed = ball_speed
-            ball_speed += 1
-        elif right_platform_position.colliderect(ball_position):
-            ball_x_speed = -ball_speed
-            ball_speed += 1
+            ball_x_speed *= -1
+            ball_speed += 0.3
+            if ball_y_speed > 0 and direction_of_left_platform == 1:
+                ball_y_speed *= -1
+                ball_y_speed -= random.choice([1, 1.25, 1.5, 1.75, 2])
+            elif ball_y_speed > 0 and direction_of_left_platform == -1:
+                ball_y_speed += random.choice([1, 1.25, 1.5, 1.75, 2])
+                
+            elif ball_y_speed < 0 and direction_of_left_platform == 1:
+                ball_y_speed -= random.choice([1, 1.25, 1.5, 1.75, 2])
+            elif ball_y_speed > 0 and direction_of_left_platform == -1:
+                ball_y_speed *= -1
+                ball_y_speed += random.choice([1, 1.25, 1.5, 1.75, 2])
             
+        elif right_platform_position.colliderect(ball_position):
+            ball_x_speed *= -1
+            ball_speed += 0.3
+            if ball_y_speed > 0 and direction_of_right_platform == 1:
+                ball_y_speed *= -1
+                ball_y_speed -= 2
+            elif ball_y_speed > 0 and direction_of_right_platform == -1:
+                ball_y_speed += 2
+                
+            elif ball_y_speed < 0 and direction_of_right_platform == 1:
+                ball_y_speed -= 2
+            elif ball_y_speed > 0 and direction_of_right_platform == -1:
+                ball_y_speed *= -1
+                ball_y_speed += 2
             
         #reflect from top and bottom
-        if ball_position.bottom >= window_heigth:
-            ball_y_speed = -ball_speed
-        elif ball_position.top <= top_menu_height:
-            ball_y_speed = ball_speed
+        if ball_position.bottom >= window_heigth or ball_position.top <= top_menu_height:
+            ball_y_speed *= -1
         
         
         #control
         if keys[pygame.K_s] and left_platform_position.y <= window_heigth - left_platform_heigth:
             left_platform_position.y += speed_of_left_platform
+            direction_of_left_platform = -1
         elif keys[pygame.K_w] and left_platform_position.y >= top_menu_height:
             left_platform_position.y -= speed_of_left_platform
+            direction_of_left_platform = 1
         
         if keys[pygame.K_DOWN] and right_platform_position.y <= window_heigth - right_platform_heigth:
             right_platform_position.y += speed_of_right_platform
+            direction_of_right_platform = -1
         elif keys[pygame.K_UP] and right_platform_position.y >= top_menu_height:
             right_platform_position.y -= speed_of_right_platform
-        
+            direction_of_right_platform = 1
+            
+        if not pygame.key.get_pressed()[pygame.K_s] and not pygame.key.get_pressed()[pygame.K_w]:
+            direction_of_left_platform = 0
+        if not pygame.key.get_pressed()[pygame.K_DOWN] and not pygame.key.get_pressed()[pygame.K_UP]:
+            direction_of_right_platform = 0
         
         #lose
         if ball_position.left >= window_width - right_platform_width * 6:
@@ -285,8 +318,8 @@ while game_is_running:
             beginning_of_match = True
             
             pygame.draw.circle(window, color_of_ball, ball_position.center, ball_radius)
-            pygame.draw.rect(window, color_for_platforms, left_platform_position)
-            pygame.draw.rect(window, color_for_platforms, right_platform_position)
+            pygame.draw.rect(window, color_of_platforms, left_platform_position)
+            pygame.draw.rect(window, color_of_platforms, right_platform_position)
             
               
         if count_click_of_ready_p1 % 2 == 0:
@@ -302,9 +335,32 @@ while game_is_running:
         window.blit(readillity_p1, [window_width // 2 - 460, 600])
         window.blit(readillity_p2, [window_width // 2 + 150, 600])
     
+    
+    if score_of_player_1 == 10 or score_of_player_2 == 10:
+        game_is_running = False
+    
     clock.tick(fps)
     
     pygame.display.flip()
     
+       
+while not game_is_running:
+    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_is_running = True
+            break
+    
+    draw_screen()
+    
+    if score_of_player_1 == 10:
+        window.blit(harlow_solid_italic_font_100.render("Player 1 wins", True, (0, 149, 182)), [window_width / 2 - 220, window_heigth / 2 + 150])
+    else:
+        window.blit(harlow_solid_italic_font_100.render("Player 2 wins", True, (0, 149, 182)), [window_width / 2 - 220, window_heigth / 2 + 150])
+        
+    clock.tick(fps)
+    
+    pygame.display.flip()
+
 
 pygame.quit()
