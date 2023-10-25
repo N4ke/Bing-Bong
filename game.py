@@ -332,6 +332,9 @@ while game_is_running:
         else:
             readillity_p2 = britannic_bold_font_100.render(player_2_ready, True, green_color)
         
+        
+        window.blit(verdana_pro_semibold_40.render("Press R to be ready", True, color_of_score_font), [window_width // 2 - 440, 570])
+        window.blit(verdana_pro_semibold_40.render("Press L to be ready", True, color_of_score_font), [window_width // 2 + 170, 570])
         window.blit(readillity_p1, [window_width // 2 - 460, 600])
         window.blit(readillity_p2, [window_width // 2 + 150, 600])
     
@@ -343,24 +346,25 @@ while game_is_running:
     
     pygame.display.flip()
     
-       
-while not game_is_running:
-    
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            game_is_running = True
-            break
-    
-    draw_screen()
-    
-    if score_of_player_1 == 10:
-        window.blit(harlow_solid_italic_font_100.render("Player 1 wins", True, (0, 149, 182)), [window_width / 2 - 220, window_heigth / 2 + 150])
-    else:
-        window.blit(harlow_solid_italic_font_100.render("Player 2 wins", True, (0, 149, 182)), [window_width / 2 - 220, window_heigth / 2 + 150])
+
+if score_of_player_1 == 10 or score_of_player_2 == 10:     
+    while not game_is_running:
         
-    clock.tick(fps)
-    
-    pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_is_running = True
+                break
+        
+        draw_screen()
+        
+        if score_of_player_1 == 10:
+            window.blit(harlow_solid_italic_font_100.render("Player 1 wins", True, (0, 149, 182)), [window_width / 2 - 220, window_heigth / 2 + 150])
+        else:
+            window.blit(harlow_solid_italic_font_100.render("Player 2 wins", True, (0, 149, 182)), [window_width / 2 - 220, window_heigth / 2 + 150])
+            
+        clock.tick(fps)
+        
+        pygame.display.flip()
 
 
 pygame.quit()
